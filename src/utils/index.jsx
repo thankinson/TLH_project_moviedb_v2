@@ -66,7 +66,6 @@ export const deleteUser = async (user) => {
 export const logout = ({ setUser }) => {
     try {
         localStorage.clear();
-        // window.location.reload(false);
         setUser();
     } catch (error) {
         console.log(error)
@@ -98,13 +97,17 @@ export const updatePass = async (user, passUpdate) => {
 // movie controlls
 export const addMovie = async (film) => {
     try {
-        await fetch(`${dbConnection}movie`, {
-            method: "POST",
+        await fetch(`${dbConnection}addtitle`, {
+            method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                tmdbId: film.id,
-                title: film.title,
-                poster: film.poster,
+
+                username: film.username,
+                movies: {
+                        tmdbId: film.id,
+                        title: film.title,
+                        poster: film.poster
+                        }
             }),
         });
         // const data = await response.JSON()

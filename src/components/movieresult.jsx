@@ -9,11 +9,12 @@ import "../globalStyles/global.css";
 
 const dbConnection = process.env.REACT_APP_REST_API
 
-export const Movieresults = ({movie, checkMovie, setCheckMovie}) =>{
+export const Movieresults = ({user, movie, checkMovie, setCheckMovie}) =>{
     const [openItemIndex, setOpenItemIndex] = useState(undefined);
     const [idArray, setIdArray] = useState([])
  
     const [film, setFilm] = useState({
+        username: '',
         id: '',
         title: '',
         poster: ''});
@@ -67,7 +68,9 @@ export const Movieresults = ({movie, checkMovie, setCheckMovie}) =>{
                                     {idArray.includes(JSON.stringify(movie.id)) 
                                         ? <InDbPara><p>Already in colection</p></InDbPara>
                                         : <ButtonAdd onClick={()=> 
-                                        setFilm({id: movie.id,
+                                        setFilm({
+                                                username: user,
+                                                id: movie.id,
                                                 title: movie.original_title, 
                                                 poster: movie.poster_path})
                                                 }>
