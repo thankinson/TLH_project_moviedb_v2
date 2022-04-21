@@ -38,9 +38,14 @@ export const SearchApi = ({user, setUser}) =>{
         useEffect(()=> {
             const MyCollection = async () => {
                 try {     
-                    const response = await fetch(`${dbConnection}movie`);
+                    const response = await fetch(`${dbConnection}films`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("myToken")}`,
+                        },
+                    });
                     const data = await response.json();
-                    setCheckMovie(data.allMovie);
+                    setCheckMovie(data.movies);
                     } catch(errorLog){
                         console.log(errorLog);
                     };       

@@ -9,12 +9,18 @@ export const ListAll = () =>{
     useEffect(()=> {
         const listMovie = async () => {
             try {     
-                const response = await fetch(`${dbConnection}movie`);
+                const response = await fetch(`${dbConnection}films`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("myToken")}`,
+                    },
+                });
                 const data = await response.json();
-                setList(data.allMovie)
+                setList(data)
                 } catch(errorLog){
                     console.log(errorLog)
                 }
+
         };
         listMovie();
     }, [])
