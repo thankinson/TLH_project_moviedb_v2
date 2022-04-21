@@ -69,7 +69,7 @@ export const SearchApi = ({user, setUser}) =>{
             
         </DivSearch>
         <DivSearchResults>
-            <Movieresults movie={movie} checkMovie={checkMovie} setCheckMovie={setCheckMovie} />
+            <Movieresults user={user} movie={movie} checkMovie={checkMovie} setCheckMovie={setCheckMovie} />
         </DivSearchResults>
         </PageContainer>
         </>
