@@ -1,0 +1,21 @@
+/* ######################################### */
+/* Global */
+p{
+    overflow-wrap: break-word;
+  }
+  *{
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  h1, h2,h3, h4, p{
+    color: white;
+  }
+    body{
+    overflow-x: hidden;
+    background-color: #131516;
+    margin: 0;
+  }
+
+
+
+  
+ 
