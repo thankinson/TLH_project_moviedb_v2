@@ -1,4 +1,4 @@
-import { React, useState} from "react";
+import { React, useState, useEffect} from "react";
 import Collapse from "react-css-collapse";
 // utils
 import { addMovie } from "../utils";
@@ -9,26 +9,36 @@ import "../globalStyles/global.css";
 
 const dbConnection = process.env.REACT_APP_REST_API
 
-export const Movieresults = ({user, movie, checkMovie, setCheckMovie}) =>{
+export const Movieresults = ({user, movie}) =>{
     const [openItemIndex, setOpenItemIndex] = useState(undefined);
-    const [idArray, setIdArray] = useState([])
- 
+    const [idArray, setIdArray] = useState([]);
+    const [checkMovie, setCheckMovie] = useState([]);
+    const [stateRefresh, setStateRefresh] = useState(0); // used to refres useEffect
+
     const [film, setFilm] = useState({
         username: '',
         id: '',
         title: '',
         poster: ''});
 
-        const MyCollection = async () => {
-            try {     
-                const response = await fetch(`${dbConnection}movie`);
-                const data = await response.json();
-                console.log(data.allMovie);
-                setCheckMovie(data.allMovie);
-                } catch(errorLog){
-                    console.log(errorLog);
-                };       
-            };
+        useEffect(()=> {
+            const MyCollection = async () => {
+                try {     
+                    const response = await fetch(`${dbConnection}films`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("myToken")}`,
+                        },
+                    });
+                    const data = await response.json();
+                    setCheckMovie(data);
+                    } catch(errorLog){
+                        console.log(errorLog);
+                    };            
+                };
+             MyCollection();
+             
+        }, [stateRefresh]); 
 
         const CheckArray = () =>{
             for ( let i = 0; i < checkMovie.length; i++ ){
@@ -39,12 +49,13 @@ export const Movieresults = ({user, movie, checkMovie, setCheckMovie}) =>{
         const submitHandler =  async (e) => {
             e.preventDefault();
             await addMovie(film)
-            MyCollection()
+            setStateRefresh(stateRefresh + 1)
+            
         };
 
         function toggle(id) {
             setOpenItemIndex(openItemIndex === id ? undefined : id);
-            CheckArray()
+            CheckArray();
           };
   
     return(
