@@ -16,11 +16,11 @@ export const Movieresults = ({user, movie}) =>{
     const [stateRefresh, setStateRefresh] = useState(0); // used to refres useEffect
 
     const [film, setFilm] = useState({
-        username: '',
         id: '',
         title: '',
         poster: ''});
 
+        // database call. recalls when item addd to DB. 
         useEffect(()=> {
             const MyCollection = async () => {
                 try {     
@@ -32,6 +32,7 @@ export const Movieresults = ({user, movie}) =>{
                     });
                     const data = await response.json();
                     setCheckMovie(data);
+                    console.log(data)
                     } catch(errorLog){
                         console.log(errorLog);
                     };            
@@ -40,6 +41,8 @@ export const Movieresults = ({user, movie}) =>{
              
         }, [stateRefresh]); 
 
+        // This array extracts the ids from the database and stores them in an array
+        // this needs to run on update but throws back errors when used with useeffect
         const CheckArray = () =>{
             for ( let i = 0; i < checkMovie.length; i++ ){
                 setIdArray(idArray => [...idArray, checkMovie[i].tmdbId]);
@@ -48,14 +51,14 @@ export const Movieresults = ({user, movie}) =>{
         
         const submitHandler =  async (e) => {
             e.preventDefault();
-            await addMovie(film)
+            await addMovie(user, film, idArray)
             setStateRefresh(stateRefresh + 1)
-            
         };
 
+        // this is for the toggle on the buttons to open and close
         function toggle(id) {
             setOpenItemIndex(openItemIndex === id ? undefined : id);
-            CheckArray();
+            CheckArray(); // placed it here until i can figure out how to get it to run when film is added
           };
   
     return(
@@ -78,13 +81,13 @@ export const Movieresults = ({user, movie}) =>{
                             <Form onSubmit={submitHandler}>
                                     {idArray.includes(JSON.stringify(movie.id)) 
                                         ? <InDbPara><p>Already in colection</p></InDbPara>
-                                        : <ButtonAdd onClick={()=> 
+                                        : <ButtonAdd onClick={()=> {
                                         setFilm({
-                                                username: user,
                                                 id: movie.id,
                                                 title: movie.original_title, 
                                                 poster: movie.poster_path})
-                                                }>
+                                        }}>
+
                                         Add to Collection
                                         </ButtonAdd>
                             }
