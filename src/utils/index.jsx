@@ -66,7 +66,6 @@ export const deleteUser = async (user) => {
 export const logout = ({ setUser }) => {
     try {
         localStorage.clear();
-        // window.location.reload(false);
         setUser();
     } catch (error) {
         console.log(error)
@@ -96,17 +95,26 @@ export const updatePass = async (user, passUpdate) => {
 };
 
 // movie controlls
-export const addMovie = async (film) => {
+export const addMovie = async (user, film, idArray) => {
     try {
-        await fetch(`${dbConnection}movie`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                tmdbId: film.id,
-                title: film.title,
-                poster: film.poster,
-            }),
-        });
+        console.log(film.id)
+        if ((idArray.includes(JSON.stringify(film.id)))) {
+            console.log("already in db")
+        } else {
+            await fetch(`${dbConnection}addtitle`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    username: user,
+                    movies: {
+                            tmdbId: film.id,
+                            title: film.title,
+                            poster: film.poster
+                            }
+                }),
+            });
+        }
+
         // const data = await response.JSON()
         // if (!data.msg) {
         //     throw new Error(data.err)
@@ -115,6 +123,25 @@ export const addMovie = async (film) => {
         console.log(error);
     }
 };
+
+export const deleteMovie = async (user, filmRemoved) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_REST_API}remove`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user,
+          movies: {tmdbId: filmRemoved.tmdbId}
+        }),
+      });
+      const data = response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 export const listMovie = async () => {
     try {

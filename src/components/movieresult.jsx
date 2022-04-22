@@ -1,4 +1,4 @@
-import { React, useState} from "react";
+import { React, useState, useEffect} from "react";
 import Collapse from "react-css-collapse";
 // utils
 import { addMovie } from "../utils";
@@ -9,26 +9,40 @@ import "../globalStyles/global.css";
 
 const dbConnection = process.env.REACT_APP_REST_API
 
-export const Movieresults = ({movie, checkMovie, setCheckMovie}) =>{
+export const Movieresults = ({user, movie}) =>{
     const [openItemIndex, setOpenItemIndex] = useState(undefined);
-    const [idArray, setIdArray] = useState([])
- 
+    const [idArray, setIdArray] = useState([]);
+    const [checkMovie, setCheckMovie] = useState([]);
+    const [stateRefresh, setStateRefresh] = useState(0); // used to refres useEffect
+
     const [film, setFilm] = useState({
         id: '',
         title: '',
         poster: ''});
 
-        const MyCollection = async () => {
-            try {     
-                const response = await fetch(`${dbConnection}movie`);
-                const data = await response.json();
-                console.log(data.allMovie);
-                setCheckMovie(data.allMovie);
-                } catch(errorLog){
-                    console.log(errorLog);
-                };       
-            };
+        // database call. recalls when item addd to DB. 
+        useEffect(()=> {
+            const MyCollection = async () => {
+                try {     
+                    const response = await fetch(`${dbConnection}films`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("myToken")}`,
+                        },
+                    });
+                    const data = await response.json();
+                    setCheckMovie(data);
+                    console.log(data)
+                    } catch(errorLog){
+                        console.log(errorLog);
+                    };            
+                };
+             MyCollection();
+             
+        }, [stateRefresh]); 
 
+        // This array extracts the ids from the database and stores them in an array
+        // this needs to run on update but throws back errors when used with useeffect
         const CheckArray = () =>{
             for ( let i = 0; i < checkMovie.length; i++ ){
                 setIdArray(idArray => [...idArray, checkMovie[i].tmdbId]);
@@ -37,13 +51,14 @@ export const Movieresults = ({movie, checkMovie, setCheckMovie}) =>{
         
         const submitHandler =  async (e) => {
             e.preventDefault();
-            await addMovie(film)
-            MyCollection()
+            await addMovie(user, film, idArray)
+            setStateRefresh(stateRefresh + 1)
         };
 
+        // this is for the toggle on the buttons to open and close
         function toggle(id) {
             setOpenItemIndex(openItemIndex === id ? undefined : id);
-            CheckArray()
+            CheckArray(); // placed it here until i can figure out how to get it to run when film is added
           };
   
     return(
@@ -66,11 +81,13 @@ export const Movieresults = ({movie, checkMovie, setCheckMovie}) =>{
                             <Form onSubmit={submitHandler}>
                                     {idArray.includes(JSON.stringify(movie.id)) 
                                         ? <InDbPara><p>Already in colection</p></InDbPara>
-                                        : <ButtonAdd onClick={()=> 
-                                        setFilm({id: movie.id,
+                                        : <ButtonAdd onClick={()=> {
+                                        setFilm({
+                                                id: movie.id,
                                                 title: movie.original_title, 
                                                 poster: movie.poster_path})
-                                                }>
+                                        }}>
+
                                         Add to Collection
                                         </ButtonAdd>
                             }

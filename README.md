@@ -1,3 +1,11 @@
+# This Project
+
+This was an attempt to take my movie database and have it on a single schema only. Unfortuntly due to restraints with foreign keys i will not be continueing with this version.
+
+Each movie added to a user cant have an ID set as unique. This causes the issue of another user not being able to add that movie to there own database.
+
+Removing the unique value also caused the issue of being able to add multiple entrys of one film into the database. 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
