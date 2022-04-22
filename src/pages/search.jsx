@@ -13,13 +13,11 @@ import "../globalStyles/global.css";
 
 
 const { REACT_APP_API_KEY } = process.env
-const dbConnection = process.env.REACT_APP_REST_API
 
 // main code
 export const SearchApi = ({user, setUser}) =>{
     const [movie, setMovie ] = useState([]);
     const [search, setSearch] = useState();
-    const [checkMovie, setCheckMovie] = useState([]);
 
     useEffect(() => {
         document.title = "HMD | Search";
@@ -34,25 +32,6 @@ export const SearchApi = ({user, setUser}) =>{
                     console.log(errorLog);
                 }
             };
-
-        useEffect(()=> {
-            const MyCollection = async () => {
-                try {     
-                    const response = await fetch(`${dbConnection}films`, {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("myToken")}`,
-                        },
-                    });
-                    const data = await response.json();
-                    setCheckMovie(data.movies);
-                    } catch(errorLog){
-                        console.log(errorLog);
-                    };       
-                };
-             MyCollection();
-
-        }, []); 
 
         const submitHandler = (e) => {
             e.preventDefault();
@@ -74,7 +53,7 @@ export const SearchApi = ({user, setUser}) =>{
             
         </DivSearch>
         <DivSearchResults>
-            <Movieresults user={user} movie={movie} checkMovie={checkMovie} setCheckMovie={setCheckMovie} />
+            <Movieresults user={user} movie={movie}  />
         </DivSearchResults>
         </PageContainer>
         </>
